@@ -2,20 +2,21 @@
 // For config options, see the README at: https://github.com/devcontainers/templates/tree/main/src/ruby
 {
   "name": "kzlt_ruby",
-  "dockerComposeFile": "compose.yaml",
+  "dockerComposeFile": [
+    "./compose.yaml"
+  ],
   "service": "rails-app",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "workspaceFolder": "/workspaces/kzlt-ruby",
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/rails/devcontainer/features/activestorage": {},
-    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
-    "ghcr.io/rails/devcontainer/features/sqlite3": {}
+//   "ghcr.io/rails/devcontainer/features/activestorage": {},
+//   "ghcr.io/rails/devcontainer/features/sqlite3": {},
+//   "ghcr.io/duduribeiro/devcontainer-features/neovim:1": {"version": "nightly"},
+//   "ghcr.io/duduribeiro/devcontainer-features/tmux:1": {"version": "latest"}
   },
 
   "containerEnv": {
-    "KAMAL_REGISTRY_PASSWORD": "$KAMAL_REGISTRY_PASSWORD"
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -25,9 +26,15 @@
   // "customizations": {},
 
   // Uncomment to connect as root instead. More info: https://containers.dev/implementors/json_reference/#remoteUser.
-  // "remoteUser": "root",
+  "remoteUser": "vscode",
 
+  "mounts": [
+    "source=${localEnv:HOME}/.config/nvim,target=/home/vscode/.config/nvim,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached",
+  ],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bin/setup --skip-server"
+  "postCreateCommand": [
+    "sh .devcontainer/install.sh"
+  ]
 }
