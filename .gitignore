@@ -20,6 +20,7 @@
 /tmp/pids/*
 !/tmp/pids/
 !/tmp/pids/.keep
+/tmp/cache/*
 
 # Ignore storage (uploaded files in development and any SQLite databases).
 /storage/*
@@ -32,3 +33,5 @@
 /config/master.key
 
 /vendor/bundle
+
+.ruby-lsp/*
