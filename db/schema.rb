@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_25_154538) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_25_162904) do
+  create_table "channels", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "channel_id", null: false
+    t.integer "workspace_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["channel_id"], name: "index_channels_on_channel_id", unique: true
+    t.index ["workspace_id"], name: "index_channels_on_workspace_id"
+  end
+
   create_table "workspaces", force: :cascade do |t|
     t.string "name", null: false
     t.string "token", null: false
@@ -18,4 +28,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_25_154538) do
     t.datetime "updated_at", null: false
     t.index ["token"], name: "index_workspaces_on_token", unique: true
   end
+
+  add_foreign_key "channels", "workspaces"
 end
