@@ -2,10 +2,11 @@
 
 class CommandExecutor
   class Response
-    attr_reader :message
+    attr_reader :message, :is_error
 
-    def initialize(message:)
+    def initialize(message:, is_error: false)
       @message = message
+      @is_error = is_error
     end
   end
 end
