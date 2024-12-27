@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_25_162904) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_27_042555) do
   create_table "channels", force: :cascade do |t|
     t.string "name", null: false
     t.string "slack_channel_id", null: false
@@ -19,6 +19,25 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_25_162904) do
     t.datetime "updated_at", null: false
     t.index ["slack_channel_id"], name: "index_channels_on_slack_channel_id", unique: true
     t.index ["workspace_id"], name: "index_channels_on_workspace_id"
+  end
+
+  create_table "entries", force: :cascade do |t|
+    t.string "title", null: false
+    t.integer "status", default: 0, null: false
+    t.integer "channel_id", null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["channel_id"], name: "index_entries_on_channel_id"
+    t.index ["user_id"], name: "index_entries_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slack_user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slack_user_id"], name: "index_users_on_slack_user_id", unique: true
   end
 
   create_table "workspaces", force: :cascade do |t|
@@ -30,4 +49,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_25_162904) do
   end
 
   add_foreign_key "channels", "workspaces"
+  add_foreign_key "entries", "channels"
+  add_foreign_key "entries", "users"
 end
