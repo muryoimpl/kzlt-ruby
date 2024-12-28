@@ -31,6 +31,7 @@ RSpec.describe CommandExecutor::My, type: :model do
         - #{entry1.title}, entryId: #{entry1.id}
         - #{entry2.title}, entryId: #{entry2.id}
       TXT
+      expect(response.is_private).to be false
     end
   end
 end

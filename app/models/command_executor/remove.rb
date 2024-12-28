@@ -5,7 +5,7 @@ class CommandExecutor
     def execute
       entry = channel.entries.find(argument)
       if user != entry.user
-        return CommandExecutor::Response.new(message: unauthorized_message, is_error: true)
+        return CommandExecutor::Response.new(message: unauthorized_message, is_private: true)
       end
 
       @title = entry.title
@@ -13,7 +13,7 @@ class CommandExecutor
 
       CommandExecutor::Response.new(message:)
     rescue ActiveRecord::RecordNotFound
-      CommandExecutor::Response.new(message: not_found_message, is_error: true)
+      CommandExecutor::Response.new(message: not_found_message, is_private: true)
     end
 
     private

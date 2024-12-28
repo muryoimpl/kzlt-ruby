@@ -23,6 +23,7 @@ RSpec.describe CommandExecutor::Remove, type: :model do
 
       msg = "LT title: #{entry.title} のエントリが取り消されました。"
       expect(response.message).to eq msg
+      expect(response.is_private).to be false
     end
 
     context "when will remove other user's entry" do
@@ -39,6 +40,7 @@ RSpec.describe CommandExecutor::Remove, type: :model do
 
         msg = "entry が自身のものではありません。 #{user.name}"
         expect(response.message).to eq msg
+        expect(response.is_private).to be true
       end
     end
 
@@ -50,6 +52,7 @@ RSpec.describe CommandExecutor::Remove, type: :model do
 
         msg = "entry 時に返ってきた entryId を指定してください /kzlt remove 1"
         expect(response.message).to eq msg
+        expect(response.is_private).to be true
       end
     end
   end

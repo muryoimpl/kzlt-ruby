@@ -22,6 +22,7 @@ RSpec.describe CommandExecutor::Entry, type: :model do
 
       entry = channel.entries.first
       expect(response.message).to eq "KZRB さんから LT:「#{argument}」のエントリがありました。entryId: #{entry.id}"
+      expect(response.is_private).to be false
     end
   end
 end

@@ -7,7 +7,7 @@ class CommandExecutor
 
       return CommandExecutor::Response.new(message:) if @entries.present?
 
-      CommandExecutor::Response.new(message: no_entry_message, is_error: true)
+      CommandExecutor::Response.new(message: no_entry_message, is_private: true)
     end
 
     private
