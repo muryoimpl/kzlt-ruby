@@ -8,5 +8,9 @@ class CommandExecutor
       @message = message
       @is_private = is_private
     end
+
+    def response_type
+      @is_private ? "ephemeral" : "in_channel"
+    end
   end
 end
