@@ -37,7 +37,7 @@ RSpec.describe CommandExecutor::Reset, type: :model do
       expect(response.is_private).to be true
     end
 
-    context 'エントリがない場合' do
+    context 'when there is no entry' do
       before do
         Entry.destroy_all
       end

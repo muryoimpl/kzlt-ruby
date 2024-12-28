@@ -52,7 +52,7 @@ RSpec.describe CommandExecutor::Shuffle, type: :model do
     end
 
 
-    context 'エントリが複数ある場合' do
+    context 'when there are some entries' do
       let!(:entry5) { create(:entry, user:, channel:, title: 't5') }
       let!(:entry6) { create(:entry, user:, channel:, title: 't6') }
 
@@ -94,7 +94,7 @@ RSpec.describe CommandExecutor::Shuffle, type: :model do
       end
     end
 
-    context '引数に seed が渡されている場合' do
+    context 'when seed is passed as an argument' do
       let(:argument) { '123456' }
 
       it do
@@ -105,7 +105,7 @@ RSpec.describe CommandExecutor::Shuffle, type: :model do
       end
     end
 
-    context 'エントリがない場合' do
+    context 'when there is no entry' do
       before do
         Entry.destroy_all
       end
