@@ -24,5 +24,9 @@ class CommandExecutor
     def execute
       raise NotImplementedError
     end
+
+    def no_entry_message
+      "エントリーはありません"
+    end
   end
 end

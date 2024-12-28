@@ -24,12 +24,10 @@ class CommandExecutor
     private
 
     def message
-      # | タイトル | 時刻	 | 時間	 | 担当 |
-
       text_array = []
       mkdn_array = []
 
-
+      # | タイトル | 時刻	 | 時間	 | 担当 |
       @shuffled.each.with_index(1) do |entry, i|
         text_array << "- #{entry.title} by #{entry.user.name}"
         mkdn_array << "| #{entry.title} | | | #{entry.user.name} |"
@@ -48,10 +46,6 @@ class CommandExecutor
         ```
         seed: #{@fixed_seed}
       MSG
-    end
-
-    def no_entry_message
-      "エントリーはありません"
     end
 
     def random

@@ -19,10 +19,6 @@ class CommandExecutor
       end.join("\n").concat("\n")
     end
 
-    def no_entry_message
-      "エントリーはありません"
-    end
-
     def badge(entry)
       %w[delimited ordered].include?(entry.status) ? "[done] " : ""
     end
