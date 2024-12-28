@@ -8,7 +8,7 @@ class CommandExecutor
     end
 
     def self.inherited(klass)
-      key = klass.name.split("::").last
+      key = klass.name.split("::").last.downcase
       klass.superclass.commanders[key] = klass
     end
 
