@@ -1,0 +1,23 @@
+ja:
+  activerecord:
+    models:
+      user: 発表者
+      workspace: workspace
+      channel: channel
+      entry: エントリー
+    attributes:
+      user:
+        name: ユーザー名
+        slack_user_id: user_id
+      workspace:
+        name: ワークスペース名
+        token: token
+      channel:
+        name: channel名
+        slack_channel_id: channel_id
+        workspace_id: workspace
+      entry:
+        title: タイトル
+        channel_id: channel
+        user_id: 発表者
+        status: ステータス
