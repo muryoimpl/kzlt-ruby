@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::API
-  before_action :validate_requested_token
+  before_action :validate_requested_team_id
   before_action :validate_command
 
   private
 
-  def validate_requested_token
-    @workspace = Workspace.find_by(token: params[:token])
+  def validate_requested_team_id
+    @workspace = Workspace.find_by(slack_team_id: params[:team_id])
 
     if @workspace.blank?
-      render plain: "Invalid token", status: :unauthorized
+      render plain: "Invalid team_id", status: :unauthorized
     end
   end
 

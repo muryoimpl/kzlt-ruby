@@ -11,15 +11,15 @@ RSpec.describe 'POST /api/entries', type: :request do
   let(:headers) do
     { 'Content-Type' => 'application/x-www-form-urlencoded' }
   end
-  let(:workspace) { create(:workspace) }
-  let(:token) { workspace.token }
+  let!(:workspace) { create(:workspace, slack_team_id: 'baf05f22bb869c0c8f9568c8648e474a') }
+  let(:slack_team_id) { workspace.slack_team_id }
   let(:command) { '/kzlt' }
   let(:text) { 'entry foo' }
   let(:user_id) { 'C2147483705' }
   let(:params) do
     {
-      token:,
-      team_id: 'baf05f22bb869c0c8f9568c8648e474a',
+      token: SecureRandom.hex,
+      team_id: slack_team_id,
       team_domain: 'kzrb',
       enterprise_id: 'E0001',
       enterprise_name: 'Globular%20Construct%20Inc',
@@ -40,14 +40,14 @@ RSpec.describe 'POST /api/entries', type: :request do
     CommandExecutor::Entry
   end
 
-  context "when can't find workspace by token" do
-    let(:token) { 'unknown-token' }
+  context "when can't find workspace by slack_team_id" do
+    let(:slack_team_id) { 'unknown-team_id' }
 
     it do
       subject
 
       expect(response).to have_http_status(:unauthorized)
-      expect(response.body).to include 'Invalid token'
+      expect(response.body).to include 'Invalid team_id'
     end
   end
 

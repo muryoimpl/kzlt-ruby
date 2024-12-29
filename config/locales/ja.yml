@@ -12,6 +12,7 @@ ja:
       workspace:
         name: ワークスペース名
         token: token
+        slack_team_id: team_id
       channel:
         name: channel名
         slack_channel_id: channel_id

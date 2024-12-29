@@ -28,7 +28,7 @@ module Api
 
     def entry_params
       params.permit(
-        :token,
+        :team_id,
         :channel_id,
         :channel_name,
         :user_id,

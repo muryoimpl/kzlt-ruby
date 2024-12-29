@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_28_124751) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_29_040110) do
   create_table "channels", force: :cascade do |t|
     t.string "name", null: false
     t.string "slack_channel_id", null: false
@@ -43,10 +43,10 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_28_124751) do
 
   create_table "workspaces", force: :cascade do |t|
     t.string "name", null: false
-    t.string "token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["token"], name: "index_workspaces_on_token", unique: true
+    t.string "slack_team_id", null: false
+    t.index ["slack_team_id"], name: "index_workspaces_on_slack_team_id", unique: true
   end
 
   add_foreign_key "channels", "workspaces"
