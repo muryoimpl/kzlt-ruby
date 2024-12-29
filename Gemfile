@@ -31,6 +31,7 @@ gem "kamal", require: false
 # gem "rack-cors"
 
 gem "alba"
+gem "data_migrate"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

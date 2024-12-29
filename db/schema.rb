@@ -21,6 +21,9 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_29_040110) do
     t.index ["workspace_id"], name: "index_channels_on_workspace_id"
   end
 
+  create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
+  end
+
   create_table "entries", force: :cascade do |t|
     t.string "title", null: false
     t.integer "status", default: 0, null: false
