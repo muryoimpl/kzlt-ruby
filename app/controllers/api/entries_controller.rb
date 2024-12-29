@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  class EntriesController < ApplicationController
+  class EntriesController < ::ApiBaseController
     def create
       parsed = CommandParser.parse(params[:text])
 

@@ -8,9 +8,6 @@ RSpec.describe 'POST /api/entries', type: :request do
     response.body
   end
 
-  let(:headers) do
-    { 'Content-Type' => 'application/x-www-form-urlencoded' }
-  end
   let!(:workspace) { create(:workspace, slack_team_id: 'baf05f22bb869c0c8f9568c8648e474a') }
   let(:slack_team_id) { workspace.slack_team_id }
   let(:command) { '/kzlt' }
@@ -22,7 +19,8 @@ RSpec.describe 'POST /api/entries', type: :request do
       team_id: slack_team_id,
       team_domain: 'kzrb',
       enterprise_id: 'E0001',
-      enterprise_name: 'Globular%20Construct%20Inc',
+      #       enterprise_name: 'Globular Construct Inc',
+      enterprise_name: 'GlobularConstructInc',
       channel_id: 'C2147483705',
       channel_name: 'test',
       user_id:,
@@ -35,7 +33,19 @@ RSpec.describe 'POST /api/entries', type: :request do
     }
   end
 
+  let(:headers) do
+    {
+      'Content-Type' => 'application/x-www-form-urlencoded',
+      'X-Slack-Request-Timestamp' => signatured_at,
+      'X-Slack-Signature' => hmac_digest(params)
+    }
+  end
+
   before do
+    stub_const(
+      "ENV",
+      ENV.to_hash.merge("APP_SLACK_SIGNING_SECRET" => SecureRandom.hex)
+    )
     # CommandExecutor::Executor 子クラス をロードする必要があるため呼び出す
     CommandExecutor::Entry
   end
