@@ -8,6 +8,9 @@ services:
       args:
         RUBY_VERSION: 3.3.6
 
+    environment:
+      STORAGE_EMULATOR_HOST: "localhost:4443"
+
     volumes:
       - ..:/workspaces/kzlt-ruby:cached
       - bundle_cache:/workspaces/kzlt-ruby/vendor/bundle
@@ -20,6 +23,15 @@ services:
 
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
+  cloud-storage:
+    image: fsouza/fake-gcs-server:1.43.0
+    tty: true
+    ports:
+      - "4443:4443"
+    volumes:
+      - ../tmp/cloud-storage/data:/data/kzlt-ruby
+      - ../tmp/cloud-storage/storage:/storage
+    command: -schema http -public-host ${URL:-localhost}:4443
 
 volumes:
   bundle_cache:
