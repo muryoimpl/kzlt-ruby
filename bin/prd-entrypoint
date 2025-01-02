@@ -9,9 +9,13 @@ fi
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
 
-  rm -f storage/production.sqlite3
+  if [ "$RAILS_ENV" == "production" ]; then
+    rm -f storage/kzlt-production.sqlite3 storage/production_cache.sqlite3
 
-  ./bin/rails litestream:restore -- --if-replica-exists
+    ./bin/rails litestream:restore -- --database=storage/kzlt-production.sqlite3 --if-replica-exists
+    ./bin/rails litestream:restore -- --database=storage/production_cache.sqlite3 --if-replica-exists
+
+  fi
 
   ./bin/rails db:create db:migrate:with_data
 fi
