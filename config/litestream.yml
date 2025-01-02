@@ -12,15 +12,11 @@
 dbs:
   - path: storage/kzlt-production.sqlite3
     replicas:
-      - type: s3
+      - type: gcs
         bucket: $LITESTREAM_REPLICA_BUCKET
         path: storage/kzlt-production.sqlite3
-        access-key-id: $LITESTREAM_ACCESS_KEY_ID
-        secret-access-key: $LITESTREAM_SECRET_ACCESS_KEY
   - path: storage/production_cache.sqlite3
     replicas:
-      - type: s3
+      - type: gcs
         bucket: $LITESTREAM_REPLICA_BUCKET
         path: storage/production_cache.sqlite3
-        access-key-id: $LITESTREAM_ACCESS_KEY_ID
-        secret-access-key: $LITESTREAM_SECRET_ACCESS_KEY
