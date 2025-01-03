@@ -34,4 +34,6 @@ group :development, :test do
   gem "rspec-rails", "~> 7.1.0"
   gem "factory_bot_rails"
   gem "rubocop-rails", require: false
+
+  gem "ruby-lsp"
 end
