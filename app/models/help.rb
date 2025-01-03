@@ -2,7 +2,7 @@
 
 class Help
   TEXT = <<~HELP
-    /kzlt entry <title>    -- 自分のLTを登録する。※ スペースありでも '' で囲む必要なし
+    /kzlt entry <title>    -- 自分のLTを登録する。※ title 中にスペースありでも '' で囲む必要なし
     /kzlt my               -- 自分のエントリしたLTを自分にだけ表示する
     /kzlt list             -- エントリー済みのLTをchannelに出力する(順番を決めたものを除く)
     /kzlt all              -- エントリー済みのLTを出力する(順番決めた/決めてない関係なく)
