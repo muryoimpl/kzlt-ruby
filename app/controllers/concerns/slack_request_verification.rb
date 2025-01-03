@@ -28,8 +28,21 @@ module SlackRequestVerification
       Rails.logger.info("raw_post class: #{request.raw_post.class}, value: #{request.raw_post}, method_symbol: #{request.method_symbol}")
       Rails.logger.info("my_sig: #{my_sig}")
       Rails.logger.info("header: x-slack-signature:#{request.headers[SIGNATURE_KEY]}, x-slack-request-timestamp: #{request.headers[TIMESTAMP_KEY]}")
-      params.permit!
-      Rails.logger.info("params: #{params.to_h}")
+      hash = {
+        token: params[:token],
+        team_id: params[:team_id],
+        team_domain: params[:team_domain],
+        channel_id:  params[:channel_id],
+        channel_name: params[:channel_name],
+        user_id: params[:user_id],
+        user_name: params[:user_name],
+        command: params[:command],
+        text: params[:text],
+        api_app_id: params[:api_app_id],
+        response_url: params[:response_url],
+        trigger_id: params[:trigger_id]
+      }
+      Rails.logger.info("params: #{hash}")
     end
 
     render plain: "Forbidden", status: :forbidden if my_sig != request.headers[SIGNATURE_KEY]
