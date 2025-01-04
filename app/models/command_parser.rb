@@ -6,8 +6,6 @@ class CommandParser
 
   class ParseError < StandardError; end
 
-  RESERVED_COMMANDS = %w[entry my list all shuffle reset remove delimit]
-
   attribute :command
   attribute :argument
 
@@ -33,7 +31,7 @@ class CommandParser
   private
 
   def validate_inclusion_of_reserved_commands
-    return if RESERVED_COMMANDS.include?(command)
+    return if CommandExecutor::Executor.commanders.keys.include?(command)
 
     errors.add(:command, "Invalid command: #{command}")
   end
