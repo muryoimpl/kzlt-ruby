@@ -6,7 +6,7 @@ services:
       context: ../
       dockerfile: .devcontainer/Dockerfile
       args:
-        RUBY_VERSION: 3.3.6
+        RUBY_VERSION: 3.4.1
 
     environment:
       STORAGE_EMULATOR_HOST: "localhost:4443"
