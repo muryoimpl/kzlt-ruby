@@ -16,7 +16,7 @@ require "action_view/railtie"
 # require "action_cable/engine"
 # require "rails/test_unit/railtie"
 
-require "google/cloud/error_reporting/rails"
+require "google/cloud/error_reporting/rails" if Rails.env.production?
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
