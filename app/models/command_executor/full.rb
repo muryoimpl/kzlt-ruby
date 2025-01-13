@@ -6,6 +6,7 @@ class CommandExecutor
       @entries = channel.entries.eager_load(:user).order(:id)
 
       return CommandExecutor::Response.new(message:, is_private: true) if @entries.present?
+
       CommandExecutor::Response.new(message: no_entry_message, is_private: true)
     end
 

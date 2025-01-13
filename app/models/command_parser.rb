@@ -15,9 +15,9 @@ class CommandParser
 
   def self.parse(text)
     txt = text&.strip
-    pos = txt&.index(/\s+/).to_i
     raise ParseError, "Invalid text: #{text}" if txt.blank?
 
+    pos = txt&.index(/\s+/).to_i
     cmd = txt[0..(pos - 1)]
     arg = txt[pos..-1].strip
     arg = nil if arg == cmd

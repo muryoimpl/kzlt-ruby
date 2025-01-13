@@ -5,6 +5,7 @@ class CommandExecutor
 
   class Executor
     @commanders = {}
+
     def self.commanders
       @commanders
     end
