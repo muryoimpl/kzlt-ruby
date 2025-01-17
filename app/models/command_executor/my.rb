@@ -8,7 +8,7 @@ class CommandExecutor
                              .where.not(status: :removed)
                              .order(:id)
 
-      CommandExecutor::Response.new(message:)
+      CommandExecutor::Response.new(message:, is_private: true)
     end
 
     private
