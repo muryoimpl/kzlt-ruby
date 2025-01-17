@@ -21,7 +21,7 @@ gem "alba"
 gem "data_migrate"
 gem "litestream"
 
-gem "google-cloud-error_reporting", group: :production
+# gem "google-cloud-error_reporting", group: :production
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
