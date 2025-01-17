@@ -9,7 +9,7 @@ class CommandExecutor
         return CommandExecutor::Response.new(message: error_message, is_private: true)
       end
 
-      entry = channel.entries.find_by(id: @entry_id)
+      entry = channel.entries.where(status: %w[unordered ordered]).find_by(id: @entry_id)
       if entry.nil?
         return CommandExecutor::Response.new(message: error_message, is_private: true)
       end
@@ -36,7 +36,7 @@ class CommandExecutor
       "#{user.name} の entryId: #{@entry_id} のタイトルが 『#{@title}』 に更新されました。"
     end
 
-    def error_message = "ID とタイトルを指定してください /kzlt edit <entryId> titile"
+    def error_message = "ID とタイトルを指定してください /kzlt edit <entryId> title"
 
     def unauthorized_message = "entry が自身のものではありません。 #{user.name}"
   end

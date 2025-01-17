@@ -27,7 +27,7 @@ RSpec.describe CommandExecutor::Edit, type: :model do
     end
 
     context 'when argument is wrong' do
-      let(:error_message) { "ID とタイトルを指定してください /kzlt edit <entryId> titile" }
+      let(:error_message) { "ID とタイトルを指定してください /kzlt edit <entryId> title" }
 
       context 'when argument is blank' do
         let(:argument) { '' }
@@ -71,6 +71,18 @@ RSpec.describe CommandExecutor::Edit, type: :model do
         response = subject
 
         expect(response.message).to eq 'entry が自身のものではありません。 KZRB'
+        expect(response.is_private).to be true
+      end
+    end
+
+    context "when entry's status is not unordered or ordered" do
+      let!(:entry) { create(:entry, user:, channel:, status: :removed) }
+      let(:error_message) { "ID とタイトルを指定してください /kzlt edit <entryId> title" }
+
+      it do
+        response = subject
+
+        expect(response.message).to eq error_message
         expect(response.is_private).to be true
       end
     end
