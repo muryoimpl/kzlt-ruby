@@ -29,6 +29,17 @@ RSpec.describe CommandExecutor::Edit, type: :model do
     context 'when argument is wrong' do
       let(:error_message) { "ID とタイトルを指定してください /kzlt edit <entryId> title" }
 
+      context 'when argument is nil' do
+        let(:argument) { nil }
+
+        it do
+          response = subject
+
+          expect(response.message).to eq error_message
+          expect(response.is_private).to be true
+        end
+      end
+
       context 'when argument is blank' do
         let(:argument) { '' }
 

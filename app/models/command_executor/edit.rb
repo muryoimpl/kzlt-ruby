@@ -25,7 +25,9 @@ class CommandExecutor
     private
 
     def parse_argument
-      pos = argument.index(/\s+/).to_i
+      pos = argument&.index(/\s+/).to_i
+      return if pos.zero?
+
       entry_id = argument[0..(pos - 1)]
       title = argument[pos..-1].strip
 
