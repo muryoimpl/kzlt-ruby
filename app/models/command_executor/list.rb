@@ -18,7 +18,7 @@ class CommandExecutor
       end.join("\n")
 
       <<~MSG
-        現在までのエントリー
+        現在までのエントリー: #{@entries.size} 件
         #{lines}
       MSG
     end

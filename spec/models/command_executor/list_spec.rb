@@ -26,7 +26,7 @@ RSpec.describe CommandExecutor::List, type: :model do
       response = subject
 
       msg = <<~TXT
-        現在までのエントリー
+        現在までのエントリー: 3 件
         - #{entry1.title} by #{user1.name}, entryId: #{entry1.id}
         - #{entry2.title} by #{user2.name}, entryId: #{entry2.id}
         - #{entry3.title} by #{user1.name}, entryId: #{entry3.id}
