@@ -43,4 +43,4 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
 # litestream
-plugin :litestream if ENV.fetch("RAILS_ENV", "production") == "production"
+plugin :litestream if ENV.fetch("RAILS_ENV", "") == "production"
