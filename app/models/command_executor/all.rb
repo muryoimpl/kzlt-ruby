@@ -15,7 +15,8 @@ class CommandExecutor
     private
 
     def message
-      @entries.map do |entry|
+      msg = +"entries: #{@entries.size} 件\n"
+      msg << @entries.map do |entry|
         "- #{badge(entry)}#{entry.title} by #{entry.user.name}, entryId: #{entry.id}"
       end.join("\n").concat("\n")
     end
