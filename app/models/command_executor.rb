@@ -32,10 +32,10 @@ class CommandExecutor
   end
 
   def find_or_create_user
-    user = User.find_or_create_by!(slack_user_id: params[:user_id]) do |user|
+    user = ::User.find_or_create_by!(slack_user_id: params[:user_id]) do |user|
       user.name = params[:user_name]
     end
-    user.update!(name: params[:user_name]) if user.name != params[:user_name]
+    # user.update!(name: params[:user_name]) if user.name != params[:user_name]
     user
   end
 end
