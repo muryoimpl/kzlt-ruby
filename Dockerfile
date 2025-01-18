@@ -16,6 +16,7 @@ WORKDIR /rails
 
 # Install base packages (removed libvips from packages)
 RUN apt-get update -qq && \
+    apt-get upgrade -y && \
     apt-get install --no-install-recommends -y curl libjemalloc2 sqlite3 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
