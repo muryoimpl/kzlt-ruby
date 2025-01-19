@@ -7,6 +7,7 @@ class CommandExecutor
     attr_reader :fixed_seed
 
     def execute
+      @delimited = channel.entries.delimited
       entries = channel.entries.unordered.eager_load(:user)
 
       if entries.blank?
@@ -26,19 +27,25 @@ class CommandExecutor
     def message
       text_array = []
       mkdn_array = []
+      break_index = @delimited.size % BREAK_PACE
 
       # | タイトル | 時刻	 | 時間	 | 担当 |
-      @shuffled.each.with_index(1) do |entry, i|
+      @shuffled.each do |entry|
+        break_index += 1
+
         text_array << "- #{entry.title} by #{entry.user.name}"
         mkdn_array << "| #{entry.title} | | | #{entry.user.name} |"
 
-        if (i % BREAK_PACE).zero?
+        if (break_index % BREAK_PACE).zero?
           text_array << "- 【休憩】"
           mkdn_array << "| 休憩 | | | |"
         end
       end
 
       <<~MSG
+        total entries: #{@delimited.size + @shuffled.size} 件
+        shuffled entries: #{@shuffled.size} 件
+
         #{text_array.join("\n")}
 
         ```

@@ -51,7 +51,6 @@ RSpec.describe CommandExecutor::Shuffle, type: :model do
       expect(response.is_private).to be false
     end
 
-
     context 'when there are some entries' do
       let!(:entry5) { create(:entry, user:, channel:, title: 't5') }
       let!(:entry6) { create(:entry, user:, channel:, title: 't6') }
@@ -71,6 +70,9 @@ RSpec.describe CommandExecutor::Shuffle, type: :model do
         response = subject
 
         expect(response.message).to eq <<~MSG
+          total entries: 4 件
+          shuffled entries: 3 件
+
           - #{entry6.title} by #{entry6.user.name}
           - 【休憩】
           - #{entry5.title} by #{entry5.user.name}
@@ -115,6 +117,44 @@ RSpec.describe CommandExecutor::Shuffle, type: :model do
 
         expect(response.message).to eq 'エントリーはありません'
         expect(response.is_private).to be true
+      end
+    end
+
+    context 'when shuffled after delimted' do
+      context 'when delimited count % BREAK_PACE is not 0' do
+        let!(:entry5) { create(:entry, user:, channel:, title: 't5') }
+        let!(:entry6) { create(:entry, user:, channel:, title: 't6') }
+
+        before do
+          stub_const('CommandExecutor::Shuffle::BREAK_PACE', 2)
+
+          fixed_entries = [ entry6, entry5, entry1 ]
+          allow_any_instance_of(Array).to receive(:shuffle).and_return(fixed_entries)
+        end
+
+        it do
+          response = subject
+
+          expect(response.message).to eq <<~MSG
+            total entries: 4 件
+            shuffled entries: 3 件
+
+            - #{entry6.title} by #{entry6.user.name}
+            - 【休憩】
+            - #{entry5.title} by #{entry5.user.name}
+            - #{entry1.title} by #{entry1.user.name}
+            - 【休憩】
+
+            ```
+            | #{entry6.title} | | | #{entry6.user.name} |
+            | 休憩 | | | |
+            | #{entry5.title} | | | #{entry5.user.name} |
+            | #{entry1.title} | | | #{entry1.user.name} |
+            | 休憩 | | | |
+            ```
+            seed: #{shuffle_instance.fixed_seed}
+          MSG
+        end
       end
     end
   end
