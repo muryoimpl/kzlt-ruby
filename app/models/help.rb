@@ -2,6 +2,7 @@
 
 class Help
   TEXT = <<~HELP
+    /kzlt tutorial                -- 初めての場合に、まず実行すべきコマンドを教えてくれます 【非公開出力】
     /kzlt self                    -- 自分の登録名を出力する 【非公開出力】
     /kzlt user <name>             -- 自分の登録名を更新する 【非公開出力】
     /kzlt entry <title>           -- 自分のLTを登録する。※ title 中にスペースありでも '' で囲む必要なし
