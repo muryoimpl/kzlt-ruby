@@ -7,7 +7,7 @@ class CommandExecutor
     attr_reader :fixed_seed
 
     def execute
-      @delimited = channel.entries.delimited
+      @delimited = channel.entries.delimited.to_a
       entries = channel.entries.unordered.eager_load(:user)
 
       if entries.blank?
