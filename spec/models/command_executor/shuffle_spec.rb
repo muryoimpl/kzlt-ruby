@@ -47,7 +47,7 @@ RSpec.describe CommandExecutor::Shuffle, type: :model do
         ```
       MSG
 
-      expect(response.message).to match /seed: \d+/
+      expect(response.message).to match(/seed:\s\d+/)
       expect(response.is_private).to be false
     end
 
@@ -91,7 +91,7 @@ RSpec.describe CommandExecutor::Shuffle, type: :model do
           seed: #{shuffle_instance.fixed_seed}
         MSG
 
-        expect(response.message).to match /seed: \d+/
+        expect(response.message).to match(/seed:\s\d+/)
         expect(response.is_private).to be false
       end
     end
