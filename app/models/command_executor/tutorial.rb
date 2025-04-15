@@ -10,6 +10,8 @@ class CommandExecutor
       2. `/kzlt user <name>` を実行して、自分の登録名を更新してください。
       3. `/kzlt self` を再度実行して、変更されていることを確認します。
       4. `/kzlt entry <title>` を実行して、自分の発表するLTのタイトルを登録してください。
+
+      実行するコマンドがわからなくなったら、`/kzlt` とだけ実行すればコマンド一覧が表示されます
     MSG
 
     def execute
