@@ -32,4 +32,6 @@ Rails.application.configure do
   # Litestream needs authentication credentials to access your storage provider bucket.
   # In this example, we are using Rails encrypted credentials to store the secret access key.
   # config.litestream.replica_access_key = litestream_credentials&.replica_access_key
+
+  config.litestream.base_controller_class = "::ActionController::Base"
 end
