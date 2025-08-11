@@ -1,0 +1,12 @@
+groups:
+  environment:
+    - workspaces
+    - channels
+  entries:
+    - entries
+    - users
+ignored_groups: []
+ignored_tables:
+  - active_storage_attachments
+  - active_storage_blobs
+  - data_migrations
