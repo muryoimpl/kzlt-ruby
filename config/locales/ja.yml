@@ -6,19 +6,28 @@ ja:
       channel: channel
       entry: エントリー
     attributes:
-      user:
-        name: ユーザー名
-        slack_user_id: user_id
-      workspace:
-        name: ワークスペース名
-        token: token
-        slack_team_id: team_id
-      channel:
-        name: channel名
-        slack_channel_id: channel_id
-        workspace_id: workspace
-      entry:
-        title: タイトル
-        channel_id: channel
-        user_id: 発表者
-        status: ステータス
+      erd:
+        user:
+          name: ユーザー名
+          slack_user_id: user_id
+          created_at: 作成日時
+          updated_at: 更新日時
+        workspace:
+          name: ワークスペース名
+          token: token
+          slack_team_id: team_id
+          created_at: 作成日時
+          updated_at: 更新日時
+        channel:
+          name: channel名
+          slack_channel_id: チャネルID
+          workspace_id: ワークスペースID
+          created_at: 作成日時
+          updated_at: 更新日時
+        entry:
+          title: 発表タイトル
+          channel_id: チャネルID
+          user_id: 発表者
+          status: ステータス
+          created_at: 作成日時
+          updated_at: 更新日時
