@@ -56,6 +56,34 @@ module ErdMermaid
         Rails.logger.info "all table names in erd_mermaid.yml are in database"
       end
 
+      def i18n_ja_check!(config)
+        load_model_classes!
+
+        ignored_group_tables = config.groups.select do |group, tables|
+          config.ignored_groups.include?(group)
+        end.map(&:values)
+
+        all_ignored_tables = (ignored_group_tables + config.ignored_tables).uniq
+
+        no_i18n_ja = application_record_descendants.each_with_object({}) do |klass, acc|
+          next if all_ignored_tables.include?(klass.table_name)
+
+          no_i18n_ja_attributes = klass.attribute_names.select do |attr|
+            attr != "id" &&
+              I18n.t(attr, scope: [ I18N_ATTRIBUTE_SCOPE, klass.name.underscore ], locale: :ja, default: "").blank?
+          end
+
+          acc[klass.table_name] = no_i18n_ja_attributes if no_i18n_ja_attributes.present?
+        end
+
+        todo_pathname = Rails.root.join("todo.erd_i18n_ja.yml")
+        if no_i18n_ja.blank? && File.exist?(todo_pathname)
+          todo_pathname.delete
+        else
+          todo_pathname.write(no_i18n_ja.to_yaml)
+        end
+      end
+
       private
 
       def application_record_descendants
@@ -66,6 +94,101 @@ module ErdMermaid
         Rails.autoloaders.main.eager_load_dir(Rails.root.join("app/models"))
       end
     end
+  end
+
+  class Collector
+    attr_reader :klass
+
+    def initialize(klass) = @klass = klass
+    delegate :table_name, to: :@klass
+
+    private
+
+    def translate(key, scope:) = I18n.t(key, scope:, locale: :ja, default: "")
+  end
+
+  class ModelInformationCollector < Collector
+    delegate :name, to: :klass
+
+    def name_ja
+      str = translate(klass.name.underscore, scope: "activerecord.models")
+      str.presence || ""
+    end
+
+    def attributes
+      @attributes ||= klass.columns.each_with_object({}) do |column, acc|
+        acc[column.name] = {
+          name: column.name,
+          comment: column.comment,
+          name_ja: translate(column.name, scope: [ I18N_ATTRIBUTE_SCOPE, klass.name.underscore ]),
+          type: column.type
+        }
+      end
+    end
+  end
+
+  class RelationCollector < Collector
+    attr_reader :relations
+
+    def left_name
+      table_name
+    end
+
+    def right_name(reflection) = reflection.table_name
+
+    def collect_relations
+      @relations = @klass.reflections.values.filter_map do |reflection|
+        if reflection.is_a?(::ActiveRecord::Reflection::HasAndBelongsToManyReflection)
+          raise "has_and_belongs_to_many はまだ想定していない"
+        end
+
+        next if reflection.is_a?(::ActiveRecord::Reflection::ThroughReflection)
+        next if reflection.is_a?(::ActiveRecord::Reflection::BelongsToReflection)
+
+        Relation.new(left: left_name, right: right_name(reflection), klass:, reflection:)
+      end
+    end
+  end
+
+  Relation = Data.define(:left, :right, :klass, :reflection) do
+    def table_name = left
+
+    def relation
+      case reflection
+      when ::ActiveRecord::Reflection::HasManyReflection
+        :has_many
+      when ::ActiveRecord::Reflection::HasOneReflection
+        :has_one
+      when ::ActiveRecord::Reflection::BelongsToReflection
+        :belongs_to
+      when ::ActiveRecord::Reflection::ThroughReflection
+        case reflection.through_reflection
+        when ::ActiveRecord::Reflection::HasManyReflection
+          :has_many
+        when ::ActiveRecord::Reflection::HasOneReflection
+          :has_one
+        end
+      end
+    end
+
+    def has_many? = relation == :has_many
+    def has_one? = relation == :has_one
+    def belongs_to? = relation == :belongs_to
+    def through? = !!reflection.options[:through]
+
+    def left_with_ja
+      klass_name_ja = translate(klass.name.underscore, scope: "activerecord.models")
+      klass_name_ja.present? ? "#{left}: #{klass_name_ja}" : left
+    end
+
+    def right_with_ja
+      right_klass_name_ja = translate(reflection.klass.name.underscore, scope: "activerecord.models")
+      right_klass_name_ja.present? ? "#{right}: #{right_klass_name_ja}" : right
+    end
+
+    private
+
+    def translate(key, scope:) = I18n.t(key, scope:, locale: :ja, default: "")
   end
 
   class GroupsErDiagramOutput
@@ -215,100 +338,5 @@ module ErdMermaid
         ].join(" ")
       end
     end
-  end
-
-  class Collector
-    attr_reader :klass
-
-    def initialize(klass) = @klass = klass
-    delegate :table_name, to: :@klass
-
-    private
-
-    def translate(key, scope:) = I18n.t(key, scope:, locale: :ja, default: "")
-  end
-
-  class ModelInformationCollector < Collector
-    delegate :name, to: :klass
-
-    def name_ja
-      str = translate(klass.name.underscore, scope: "activerecord.models")
-      str.presence || ""
-    end
-
-    def attributes
-      @attributes ||= klass.columns.each_with_object({}) do |column, acc|
-        acc[column.name] = {
-          name: column.name,
-          comment: column.comment,
-          name_ja: translate(column.name, scope: [ I18N_ATTRIBUTE_SCOPE, klass.name.underscore ]),
-          type: column.type
-        }
-      end
-    end
-  end
-
-  class RelationCollector < Collector
-    attr_reader :relations
-
-    def left_name
-      table_name
-    end
-
-    def right_name(reflection) = reflection.table_name
-
-    def collect_relations
-      @relations = @klass.reflections.values.filter_map do |reflection|
-        if reflection.is_a?(::ActiveRecord::Reflection::HasAndBelongsToManyReflection)
-          raise "has_and_belongs_to_many はまだ想定していない"
-        end
-
-        next if reflection.is_a?(::ActiveRecord::Reflection::ThroughReflection)
-        next if reflection.is_a?(::ActiveRecord::Reflection::BelongsToReflection)
-
-        Relation.new(left: left_name, right: right_name(reflection), klass:, reflection:)
-      end
-    end
-  end
-
-  Relation = Data.define(:left, :right, :klass, :reflection) do
-    def table_name = left
-
-    def relation
-      case reflection
-      when ::ActiveRecord::Reflection::HasManyReflection
-        :has_many
-      when ::ActiveRecord::Reflection::HasOneReflection
-        :has_one
-      when ::ActiveRecord::Reflection::BelongsToReflection
-        :belongs_to
-      when ::ActiveRecord::Reflection::ThroughReflection
-        case reflection.through_reflection
-        when ::ActiveRecord::Reflection::HasManyReflection
-          :has_many
-        when ::ActiveRecord::Reflection::HasOneReflection
-          :has_one
-        end
-      end
-    end
-
-    def has_many? = relation == :has_many
-    def has_one? = relation == :has_one
-    def belongs_to? = relation == :belongs_to
-    def through? = !!reflection.options[:through]
-
-    def left_with_ja
-      klass_name_ja = translate(klass.name.underscore, scope: "activerecord.models")
-      klass_name_ja.present? ? "#{left}: #{klass_name_ja}" : left
-    end
-
-    def right_with_ja
-      right_klass_name_ja = translate(reflection.klass.name.underscore, scope: "activerecord.models")
-      right_klass_name_ja.present? ? "#{right}: #{right_klass_name_ja}" : right
-    end
-
-    private
-
-    def translate(key, scope:) = I18n.t(key, scope:, locale: :ja, default: "")
   end
 end
