@@ -15,4 +15,10 @@ namespace :db do
     config = ErdMermaid::Config.new
     ErdMermaid::ModelLoader.check!(config)
   end
+
+  desc "i18n check"
+  task i18n_ja_check: :environment do
+    config = ErdMermaid::Config.new
+    ErdMermaid::ModelLoader.i18n_ja_check!(config)
+  end
 end
