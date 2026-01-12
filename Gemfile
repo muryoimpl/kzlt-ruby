@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "rails", "~> 8.1.1"
+gem "rails", "~> 8.1.2"
 gem "rails-i18n", "~> 8.1.0"
 gem "sqlite3", ">= 2.1"
 gem "puma", ">= 5.0"
