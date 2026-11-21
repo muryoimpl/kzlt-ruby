@@ -38,6 +38,13 @@ jobs:
             findings+=("- [ ] Litestream ${latest_release} is released. Dockerfile installs ${docker_version}; update LITESTREAM_VERSION and LITESTREAM_SHA256.")
           fi
 
+          # Litestream 0.5 restores 0.3 backups only through clients implementing ReplicaClientV3,
+          # and the gs client did not as of 0.5.18 (see #185). Upgrading is unsafe until it does.
+          gs_client=$(gh api "repos/benbjohnson/litestream/contents/gs/replica_client.go?ref=v${latest_release}" --jq .content | base64 -d)
+          if [[ "$gs_client" == *GenerationsV3* ]]; then
+            findings+=("- [ ] Litestream ${latest_release} gs client implements v0.3 restore (GenerationsV3). Upgrading to 0.5 can now restore the existing 0.3 backups on GCS; verify against a copy of the bucket first.")
+          fi
+
           latest_gem=$(curl -fsSL https://rubygems.org/api/v1/gems/litestream.json | jq -r .version)
           bundled=$(gh api "repos/fractaledmind/litestream-ruby/contents/lib/litestream/upstream.rb?ref=v${latest_gem}" --jq .content \
             | base64 -d | sed -n 's/^ *VERSION = "\(.*\)"$/\1/p')
