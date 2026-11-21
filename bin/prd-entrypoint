@@ -12,9 +12,17 @@ if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   if [ "$RAILS_ENV" == "production" ]; then
     rm -f storage/kzlt-production.sqlite3 storage/production_cache.sqlite3
 
-    ./bin/rails litestream:restore -- --database=storage/kzlt-production.sqlite3 --if-replica-exists
-    ./bin/rails litestream:restore -- --database=storage/production_cache.sqlite3 --if-replica-exists
+    for db in storage/kzlt-production.sqlite3 storage/production_cache.sqlite3; do
+      ./bin/rails litestream:restore -- --database="$db" --if-replica-exists
 
+      # --if-replica-exists exits 0 even when no backup is found (e.g. Litestream 0.5 cannot read
+      # 0.3 backups on GCS), and db:create would then start the app on an empty database.
+      # Set ALLOW_EMPTY_DATABASE=1 only for the very first deploy, when no backup exists yet.
+      if [ ! -f "$db" ] && [ "${ALLOW_EMPTY_DATABASE:-}" != "1" ]; then
+        echo "ERROR: no backup was restored for $db. Refusing to start with an empty database." >&2
+        exit 1
+      fi
+    done
   fi
 
   ./bin/rails db:create db:migrate:with_data
