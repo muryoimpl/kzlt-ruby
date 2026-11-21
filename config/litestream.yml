@@ -12,11 +12,11 @@
 dbs:
   - path: storage/kzlt-production.sqlite3
     replicas:
-      - type: gs
+      - type: gcs
         bucket: $LITESTREAM_REPLICA_BUCKET
         path: storage/kzlt-production.sqlite3
   - path: storage/production_cache.sqlite3
     replicas:
-      - type: gs
+      - type: gcs
         bucket: $LITESTREAM_REPLICA_BUCKET
         path: storage/production_cache.sqlite3
