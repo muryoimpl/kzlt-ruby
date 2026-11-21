@@ -20,11 +20,20 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl libjemalloc2 sqlite3 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-ADD https://github.com/benbjohnson/litestream/releases/download/v0.3.13/litestream-v0.3.13-linux-amd64.deb /tmp/litestream-v0.3.13-linux-amd64.deb
-RUN cd /tmp &&  dpkg -i /tmp/litestream-v0.3.13-linux-amd64.deb
+# litestream gem 0.16.1 bundles Litestream 0.5.17, which leaks connections (fixed in 0.5.18).
+# Remove this and LITESTREAM_INSTALL_DIR once the gem bundles a fixed release.
+# Cloud Build runs the legacy builder, which does not support ADD --checksum.
+ARG LITESTREAM_VERSION=0.5.18
+ARG LITESTREAM_SHA256=11d36a2d2058731ee99f201f6b68a52fcb1dd3050bdfd2237f7f39741dafe6ae
+RUN curl -fsSL -o /tmp/litestream.deb \
+      "https://github.com/benbjohnson/litestream/releases/download/v${LITESTREAM_VERSION}/litestream-${LITESTREAM_VERSION}-linux-x86_64.deb" && \
+    echo "${LITESTREAM_SHA256}  /tmp/litestream.deb" | sha256sum -c - && \
+    dpkg -i /tmp/litestream.deb && \
+    rm /tmp/litestream.deb
 
 # Set production environment
-ENV RAILS_ENV="production" \
+ENV LITESTREAM_INSTALL_DIR="/usr/bin" \
+    RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"

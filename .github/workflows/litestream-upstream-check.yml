@@ -1,0 +1,62 @@
+name: Litestream upstream check
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Check upstream status and report as an issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_TITLE: "Litestream upstream check"
+        run: |
+          set -euo pipefail
+
+          findings=()
+
+          issue_state=$(gh issue view 84 -R fractaledmind/litestream-ruby --json state --jq .state)
+          if [ "$issue_state" != "OPEN" ]; then
+            findings+=("- [ ] fractaledmind/litestream-ruby#84 (deploy overlap lock) is ${issue_state}. Check whether the lock was released and Cloud Run rollouts are now safe.")
+          fi
+
+          docker_version=$(sed -n 's/^ARG LITESTREAM_VERSION=//p' Dockerfile)
+
+          latest_release=$(gh release view -R benbjohnson/litestream --json tagName --jq '.tagName | ltrimstr("v")')
+          if [ -n "$docker_version" ] && [ "$latest_release" != "$docker_version" ]; then
+            findings+=("- [ ] Litestream ${latest_release} is released. Dockerfile installs ${docker_version}; update LITESTREAM_VERSION and LITESTREAM_SHA256.")
+          fi
+
+          latest_gem=$(curl -fsSL https://rubygems.org/api/v1/gems/litestream.json | jq -r .version)
+          bundled=$(gh api "repos/fractaledmind/litestream-ruby/contents/lib/litestream/upstream.rb?ref=v${latest_gem}" --jq .content \
+            | base64 -d | sed -n 's/^ *VERSION = "\(.*\)"$/\1/p')
+          if [ -n "$docker_version" ] && [ "$(printf '%s\n' "$docker_version" "$bundled" | sort -V | head -1)" = "$docker_version" ]; then
+            findings+=("- [ ] litestream gem ${latest_gem} bundles Litestream ${bundled} (>= ${docker_version}). Remove the Dockerfile install and LITESTREAM_INSTALL_DIR.")
+          fi
+
+          existing=$(gh issue list --state open --search "in:title \"${ISSUE_TITLE}\"" --json number,title \
+            --jq ".[] | select(.title == env.ISSUE_TITLE) | .number" | head -1)
+
+          if [ ${#findings[@]} -eq 0 ]; then
+            echo "No upstream changes to act on."
+            exit 0
+          fi
+
+          body=$(printf '%s\n' "Found by the scheduled workflow (${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})." "" "${findings[@]}")
+
+          if [ -n "$existing" ]; then
+            gh issue edit "$existing" --body "$body"
+          else
+            gh issue create --title "$ISSUE_TITLE" --body "$body"
+          fi
