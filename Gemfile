@@ -19,7 +19,7 @@ gem "bootsnap", require: false
 
 gem "alba"
 gem "data_migrate"
-gem "litestream"
+gem "litestream", "~> 0.15.0"
 
 # gem "google-cloud-error_reporting", group: :production
 
