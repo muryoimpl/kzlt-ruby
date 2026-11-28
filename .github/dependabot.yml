@@ -5,6 +5,12 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+  ignore:
+  # litestream gem 0.16+ bundles Litestream 0.5, whose gs client cannot restore
+  # the existing 0.3 backups on GCS (see #184). Upgrading is tracked by
+  # .github/workflows/litestream-upstream-check.yml.
+  - dependency-name: litestream
+    update-types: ["version-update:semver-minor", "version-update:semver-major"]
 - package-ecosystem: github-actions
   directory: "/"
   schedule:
